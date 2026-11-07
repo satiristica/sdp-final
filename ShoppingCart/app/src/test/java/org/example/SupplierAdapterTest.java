@@ -5,6 +5,7 @@ import java.util.List;
 import org.example.adapter.SupplierCatalogAdapter;
 import org.example.catalog.CatalogService;
 import org.example.common.Money;
+import org.example.common.StoreException;
 import org.example.supplier.ExternalSupplier;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,17 @@ class SupplierAdapterTest {
                 products.stream().map(product -> product.id()).toList());
         assertEquals(List.of("40000.00", "15000.00", "30000.00", "10000.00"),
                 products.stream().map(product -> product.basePrice().toPlainString()).toList());
+    }
+
+    @Test
+    void invalidSupplierRowsAreRejected() {
+        for (String row : List.of("Coat", "Coat: abc", "Coat: -5")) {
+            var adapter = new SupplierCatalogAdapter(new ExternalSupplier() {
+                @Override public String[] fetchItems() { return new String[] {row}; }
+            });
+            var error = assertThrows(StoreException.class, adapter::loadProducts);
+            assertTrue(error.getMessage().startsWith("Server Error"));
+        }
     }
 
     @Test
