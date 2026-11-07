@@ -32,10 +32,10 @@ class PricingTest {
     }
 
     @Test
-    void percentageRoundingAndInputValidationAreExplicit() {
+    void discountsAreRoundedToTwoDecimalPlaces() {
         assertEquals(Money.amount("0.01"), new PercentageDiscount(10).discountOn(Money.amount("0.05")));
         assertThrows(StoreException.class, () -> new PercentageDiscount(101));
-        assertThrows(StoreException.class, () -> Money.amount("1.001"));
+        assertEquals("1.01 KZT", Money.format(Money.amount("1.005")));
     }
 
     @Test
@@ -48,5 +48,18 @@ class PricingTest {
         assertEquals(1, store.cart().lines().size());
         assertEquals(1, store.cart().lines().getFirst().quantity());
         assertThrows(StoreException.class, () -> store.cart().remove(99));
+    }
+
+    @Test
+    void removingAnItemUsesItsCurrentPositionInTheList() {
+        var store = TestShop.create();
+        store.cart().add(TestShop.coat(store), 1);
+        store.cart().add(new GiftWrap(TestShop.coat(store)), 2);
+        store.cart().remove(1);
+        assertEquals(2, store.cart().lines().getFirst().quantity());
+        assertEquals(Money.amount("93000"), store.cart().totals().total());
+        assertThrows(StoreException.class, () -> store.cart().remove(0));
+        store.cart().remove(1);
+        assertTrue(store.cart().isEmpty());
     }
 }

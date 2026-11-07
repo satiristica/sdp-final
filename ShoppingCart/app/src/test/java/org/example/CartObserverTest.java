@@ -8,40 +8,39 @@ import org.junit.jupiter.api.Test;
 
 class CartObserverTest {
     @Test
-    void refreshUpdatesAllMatchingLinesAndPublishesOneNoticePerProduct() {
+    void refreshUpdatesAllMatchingLinesAndKeepsUnchangedPrices() {
         var store = TestShop.create();
         store.cart().add(TestShop.coat(store), 1);
         store.cart().add(new GiftWrap(TestShop.coat(store)), 2);
         store.catalog().refresh();
         assertEquals(Money.amount("153000"), store.cart().totals().total());
         assertEquals(Money.amount("45000"), store.cart().lines().getFirst().basePrice());
-        assertEquals(1, store.cart().notifications().size());
-        store.cart().clearNotifications();
+        assertEquals(Money.amount("45000"), store.cart().lines().get(1).basePrice());
         store.catalog().refresh();
-        assertTrue(store.cart().notifications().isEmpty());
+        assertEquals(Money.amount("153000"), store.cart().totals().total());
     }
 
     @Test
-    void multipleCartsReceiveUpdatesAndAnEmptyCartUnsubscribes() {
+    void cartsSharingACatalogReceiveNewPrices() {
         var store = TestShop.create();
         var otherCart = new ShoppingCart(store.catalog());
         store.cart().add(TestShop.coat(store), 1);
         otherCart.add(TestShop.coat(store), 1);
         store.catalog().refresh();
-        assertEquals(1, store.cart().notifications().size());
-        assertEquals(1, otherCart.notifications().size());
+        assertEquals(Money.amount("50000"), store.cart().totals().total());
+        assertEquals(Money.amount("50000"), otherCart.totals().total());
         otherCart.clear();
         assertTrue(otherCart.isEmpty());
-        assertTrue(otherCart.notifications().isEmpty());
+        assertEquals(Money.ZERO, otherCart.totals().total());
     }
 
     @Test
-    void removingTheLastLineUnsubscribesAndAddingAgainResubscribes() {
+    void addingAfterAnEmptyCartRefreshUsesTheCurrentPrice() {
         var store = TestShop.create();
         store.cart().add(TestShop.coat(store), 1);
         store.cart().remove(1);
         store.catalog().refresh();
-        assertTrue(store.cart().notifications().isEmpty());
+        assertTrue(store.cart().isEmpty());
         store.cart().add(TestShop.coat(store), 1);
         assertEquals(Money.amount("50000"), store.cart().totals().total());
     }

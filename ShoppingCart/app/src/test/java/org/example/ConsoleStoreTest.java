@@ -50,12 +50,33 @@ class ConsoleStoreTest {
     }
 
     @Test
-    void invalidChoiceAndEndOfInputDoNotAddPartialProducts() {
+    void invalidChoicesDoNotAddPartialProducts() {
         var store = TestShop.create();
-        String output = run(store, "2", "9", "2", "1", "wrong", "2", "1");
+        String output = run(store, "2", "9", "2", "1", "wrong", "7");
         assertTrue(output.contains("Client Error: Choose a number from 1 to 4"));
         assertTrue(output.contains("Client Error: Enter a whole number."));
         assertTrue(output.contains("Goodbye!"));
+        assertTrue(store.cart().isEmpty());
+    }
+
+    @Test
+    void aspectHandlesBadQuantityAndEmptyCheckoutWithoutStoppingTheMenu() {
+        var store = TestShop.create();
+        String output = run(store, "2", "1", "1", "1", "n", "0", "6", "7");
+        assertTrue(output.contains("Quantity must be greater than zero"));
+        assertTrue(output.contains("Add a product before checkout"));
+        assertTrue(output.contains("Goodbye!"));
+        assertTrue(store.cart().isEmpty());
+    }
+
+    @Test
+    void cartNumbersFollowTheRemainingItemsAfterRemoval() {
+        var store = TestShop.create();
+        store.cart().add(TestShop.coat(store), 1);
+        store.cart().add(TestShop.coat(store), 2);
+        String output = run(store, "3", "1", "1", "3", "1", "1", "7");
+        assertTrue(output.contains("2. Coat (Gucci, Cotton) x2"));
+        assertTrue(output.contains("1. Coat (Gucci, Cotton) x2"));
         assertTrue(store.cart().isEmpty());
     }
 

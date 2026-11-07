@@ -3,7 +3,6 @@ package org.example.cart;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import org.example.catalog.CatalogService;
 import org.example.common.Money;
 import org.example.common.StoreException;
@@ -15,71 +14,48 @@ import org.example.product.CartItem;
 public final class ShoppingCart implements ProductObserver {
     private final CatalogService catalog;
     private final List<CartLine> lines = new ArrayList<>();
-    private final List<String> notifications = new ArrayList<>();
     private DiscountStrategy discount = new NoDiscount();
-    private int nextNumber = 1;
 
-    public ShoppingCart(CatalogService catalog) { 
-        this.catalog = catalog; 
+    public ShoppingCart(CatalogService catalog) {
+        this.catalog = catalog;
+        catalog.addObserver(this);
     }
 
-    public List<CartLine> lines() { 
-        return List.copyOf(lines); 
+    public List<CartLine> lines() {
+        return List.copyOf(lines);
     }
 
-    public boolean isEmpty() { 
-        return lines.isEmpty(); 
+    public boolean isEmpty() {
+        return lines.isEmpty();
     }
 
-    public DiscountStrategy discount() { 
-        return discount; 
-    }
-    
-    public List<String> notifications() { 
-        return List.copyOf(notifications); 
-    }
-
-    public void clearNotifications() { 
-        notifications.clear(); 
+    public DiscountStrategy discount() {
+        return discount;
     }
 
     public void add(CartItem item, int quantity) {
-        BigDecimal price = catalog.find(item.id()).basePrice();
-        CartLine line = new CartLine(nextNumber, item, quantity, price);
-        
-        if (isEmpty()) { 
-            catalog.addObserver(this); 
-        }
-        
-        lines.add(line);
-        nextNumber++;
+        lines.add(new CartLine(item, quantity, catalog.find(item.id()).basePrice()));
     }
 
     public void remove(int number) {
-        lines.remove(indexOf(number));
-        
-        if (isEmpty()) { 
-            catalog.removeObserver(this); 
+        if (number < 1 || number > lines.size()) {
+            throw new StoreException("Client Error: Cart item not found: " + number);
         }
+        lines.remove(number - 1);
     }
 
-    public void applyDiscount(DiscountStrategy strategy) { 
-        discount = Objects.requireNonNull(strategy); 
+    public void applyDiscount(DiscountStrategy strategy) {
+        discount = strategy;
     }
 
     public Totals totals() {
         BigDecimal products = Money.ZERO;
         BigDecimal extras = Money.ZERO;
-        
         for (CartLine line : lines) {
             products = products.add(line.productTotal());
             extras = extras.add(line.extrasTotal());
         }
-
-        BigDecimal saved = Money.amount(discount.discountOn(products));
-        if (saved.compareTo(products) > 0) { 
-            throw new StoreException("Server Error: Discount exceeds product prices."); 
-        }
+        BigDecimal saved = discount.discountOn(products);
         return new Totals(products, extras, saved, products.subtract(saved).add(extras));
     }
 
@@ -94,28 +70,14 @@ public final class ShoppingCart implements ProductObserver {
             }
         }
         if (changed) {
-            notifications.add(catalog.find(id).name() + ": new base price " + Money.format(newPrice));
+            System.out.println("Price update: " + catalog.find(id).name() + " - " + Money.format(newPrice));
         }
     }
 
     public void clear() {
-        catalog.removeObserver(this);
         lines.clear();
-        notifications.clear();
         discount = new NoDiscount();
     }
 
-    private int indexOf(int number) {
-        for (int index = 0; index < lines.size(); index++) {
-            if (lines.get(index).number() == number) { 
-                return index; 
-            }
-        }
-        throw new StoreException("Client Error: Cart item not found: " + number);
-    }
-
-    public record Totals
-    (
-        BigDecimal products, BigDecimal extras, BigDecimal discount, BigDecimal total
-    ) {}
+    public record Totals(BigDecimal products, BigDecimal extras, BigDecimal discount, BigDecimal total) {}
 }

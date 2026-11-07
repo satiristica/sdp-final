@@ -1,14 +1,14 @@
 package org.example.cart;
 
 import java.math.BigDecimal;
-import org.example.common.Checks;
-import org.example.common.Money;
+import org.example.common.StoreException;
 import org.example.product.CartItem;
 
-public record CartLine(int number, CartItem item, int quantity, BigDecimal basePrice) {
+public record CartLine(CartItem item, int quantity, BigDecimal basePrice) {
     public CartLine {
-        Checks.positive(quantity, "Quantity");
-        basePrice = Money.amount(basePrice);
+        if (quantity <= 0) {
+            throw new StoreException("Client Error: Quantity must be greater than zero.");
+        }
     }
 
     public BigDecimal productTotal() {
@@ -19,7 +19,7 @@ public record CartLine(int number, CartItem item, int quantity, BigDecimal baseP
         return item.extrasPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
-    public CartLine withPrice(BigDecimal price) { 
-        return new CartLine(number, item, quantity, price); 
+    public CartLine withPrice(BigDecimal price) {
+        return new CartLine(item, quantity, price);
     }
 }

@@ -13,6 +13,8 @@ public class ErrorHandlingAspect {
             action.proceed();
         } catch (StoreException exception) {
             System.out.println(exception.getMessage());
+        } catch (NumberFormatException exception) {
+            System.out.println("Client Error: Enter a whole number.");
         }
     }
 }

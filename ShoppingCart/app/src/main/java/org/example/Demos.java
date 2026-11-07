@@ -8,7 +8,7 @@ import org.example.discount.PercentageDiscount;
 import org.example.product.ConfiguredProduct;
 import org.example.product.GiftWrap;
 import org.example.supplier.ExternalSupplier;
-import org.example.ui.StoreView;
+import org.example.common.Money;
 
 public final class Demos {
     private Demos() {}
@@ -30,9 +30,8 @@ public final class Demos {
         String paymentReference = payments.pay(totals.total());
         cart.clear();
 
-        StoreView view = new StoreView();
-        view.totals(totals);
-        view.paymentApproved(paymentReference);
+        System.out.println("TOTAL: " + Money.format(totals.total()));
+        System.out.println("Simulated payment approved: " + paymentReference);
         System.out.println("Cart is empty: " + cart.isEmpty());
     }
 }

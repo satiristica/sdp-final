@@ -7,7 +7,7 @@ public final class PaymentService {
     private int nextPayment = 1;
 
     public String pay(BigDecimal amount) {
-        Money.amount(amount);
+        System.out.println("Paid: " + Money.format(amount));
         return "PAY-" + nextPayment++;
     }
 }
