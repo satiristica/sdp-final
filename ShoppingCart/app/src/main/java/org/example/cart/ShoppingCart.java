@@ -14,6 +14,7 @@ import org.example.product.CartItem;
 public final class ShoppingCart implements ProductObserver {
     private final CatalogService catalog;
     private final List<CartLine> lines = new ArrayList<>();
+    private final List<String> priceUpdates = new ArrayList<>();
     private DiscountStrategy discount = new NoDiscount();
 
     public ShoppingCart(CatalogService catalog) {
@@ -70,8 +71,14 @@ public final class ShoppingCart implements ProductObserver {
             }
         }
         if (changed) {
-            System.out.println("Price update: " + catalog.find(id).name() + " - " + Money.format(newPrice));
+            priceUpdates.add(catalog.find(id).name() + " - " + Money.format(newPrice));
         }
+    }
+
+    public List<String> takePriceUpdates() {
+        List<String> updates = List.copyOf(priceUpdates);
+        priceUpdates.clear();
+        return updates;
     }
 
     public void clear() {

@@ -49,6 +49,7 @@ public final class ConsoleStore {
             case "4" -> selectDiscount();
             case "5" -> {
                 store.catalog().refresh();
+                store.cart().takePriceUpdates().forEach(update -> System.out.println("Price update: " + update));
                 showCatalog();
             }
             case "6" -> checkout();

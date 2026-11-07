@@ -16,6 +16,8 @@ class CartObserverTest {
         assertEquals(Money.amount("153000"), store.cart().totals().total());
         assertEquals(Money.amount("45000"), store.cart().lines().getFirst().basePrice());
         assertEquals(Money.amount("45000"), store.cart().lines().get(1).basePrice());
+        assertEquals(1, store.cart().takePriceUpdates().size());
+        assertTrue(store.cart().takePriceUpdates().isEmpty());
         store.catalog().refresh();
         assertEquals(Money.amount("153000"), store.cart().totals().total());
     }
