@@ -36,7 +36,7 @@ Errors are handled in one place by an AspectJ aspect (`ErrorHandlingAspect`) aro
 
 ## UML diagram
 
-![UML Diagram](uml.png)
+
 
 ## Tech stack
 

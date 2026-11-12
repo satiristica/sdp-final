@@ -48,8 +48,7 @@ public final class ConsoleStore {
             case "3" -> manageCart();
             case "4" -> selectDiscount();
             case "5" -> {
-                store.catalog().refresh();
-                store.cart().takePriceUpdates().forEach(update -> System.out.println("Price update: " + update));
+                store.refreshCatalog().forEach(update -> System.out.println("Price update: " + update));
                 showCatalog();
             }
             case "6" -> checkout();
@@ -59,7 +58,7 @@ public final class ConsoleStore {
 
     private void configureAndAdd() {
         showCatalog();
-        var products = store.catalog().products();
+        var products = store.products();
         var product = products.get(choice("Product number", products.size()));
         System.out.println("Brand: 1. Gucci (+5000)  2. Louis Vuitton (+10000)  3. Yves Saint Laurent (+7500)");
         String brand = ConfiguredProduct.BRANDS.get(choice("Brand number", ConfiguredProduct.BRANDS.size()));
@@ -69,16 +68,16 @@ public final class ConsoleStore {
         if (confirm("Add gift wrapping for " + Money.format(GiftWrap.PRICE) + " per item?")) {
             item = new GiftWrap(item);
         }
-        store.cart().add(item, integer("Quantity"));
+        store.addToCart(item, integer("Quantity"));
         showCart();
     }
 
     private void manageCart() {
         showCart();
-        if (store.cart().isEmpty()) { return; }
+        if (store.cartIsEmpty()) { return; }
         System.out.println("1. Remove item  0. Back");
         switch (text("Select an option")) {
-            case "1" -> store.cart().remove(integer("Cart item number"));
+            case "1" -> store.removeFromCart(integer("Cart item number"));
             case "0" -> { return; }
             default -> throw new StoreException("Client Error: Choose 1 or 0.");
         }
@@ -88,27 +87,27 @@ public final class ConsoleStore {
     private void selectDiscount() {
         System.out.println("1. No discount  2. 10% off clothing");
         switch (text("Select an option")) {
-            case "1" -> store.cart().applyDiscount(new NoDiscount());
-            case "2" -> store.cart().applyDiscount(new PercentageDiscount(10));
+            case "1" -> store.applyDiscount(new NoDiscount());
+            case "2" -> store.applyDiscount(new PercentageDiscount(10));
             default -> throw new StoreException("Client Error: Choose 1 or 2.");
         }
         showCart();
     }
 
     private void checkout() {
-        if (store.cart().isEmpty()) {
+        if (store.cartIsEmpty()) {
             throw new StoreException("Client Error: Add a product before checkout.");
         }
         showCart();
         if (confirm("Confirm purchase?")) {
-            System.out.println("Simulated payment approved: " + store.checkout().checkout());
+            System.out.println("Simulated payment approved: " + store.completeCheckout());
         } else {
             System.out.println("Purchase cancelled. Your cart was kept.");
         }
     }
 
     private void showCatalog() {
-        var products = store.catalog().products();
+        var products = store.products();
         for (int index = 0; index < products.size(); index++) {
             var product = products.get(index);
             System.out.println((index + 1) + ". " + product.name() + " - " + Money.format(product.basePrice()));
@@ -116,19 +115,19 @@ public final class ConsoleStore {
     }
 
     private void showCart() {
-        if (store.cart().isEmpty()) {
+        if (store.cartIsEmpty()) {
             System.out.println("Your cart is empty.");
             return;
         }
-        var lines = store.cart().lines();
+        var lines = store.cartLines();
         for (int index = 0; index < lines.size(); index++) {
             var line = lines.get(index);
             System.out.println((index + 1) + ". " + line.item().description() + " x" + line.quantity());
         }
-        var totals = store.cart().totals();
+        var totals = store.cartTotals();
         System.out.println("Clothing: " + Money.format(totals.products()));
         System.out.println("Wrapping: " + Money.format(totals.extras()));
-        System.out.println("Discount: " + store.cart().discount().description()
+        System.out.println("Discount: " + store.discountDescription()
                 + " (-" + Money.format(totals.discount()) + ")");
         System.out.println("TOTAL: " + Money.format(totals.total()));
     }
