@@ -6,8 +6,21 @@ plugins {
 
 repositories { mavenCentral() }
 
+
+val javafxVersion = "21.0.5"
+val javafxPlatform = System.getProperty("os.name").lowercase().let { os ->
+    when {
+        os.contains("win") -> "win"
+        os.contains("mac") -> if (System.getProperty("os.arch") == "aarch64") "mac-aarch64" else "mac"
+        else -> "linux"
+    }
+}
+
 dependencies {
     implementation("org.aspectj:aspectjrt:1.9.25.1")
+    for (module in listOf("base", "graphics", "controls")) {
+        implementation("org.openjfx:javafx-$module:$javafxVersion:$javafxPlatform")
+    }
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -29,6 +42,13 @@ tasks.register<JavaExec>("demo") {
     description = "Runs checkout using the services directly."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass = "org.example.Demos"
+}
+
+tasks.register<JavaExec>("gui") {
+    group = "application"
+    description = "Opens the JavaFX window."
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass = "org.example.GuiLauncher"
 }
 
 tasks.named<Test>("test") {
