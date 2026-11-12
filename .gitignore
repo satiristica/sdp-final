@@ -19,3 +19,5 @@ replay_pid*
 /ShoppingCart/**/.gradle
 /ShoppingCart/**/build
 /ShoppingCart/**/.kotlin
+
+.idea/
