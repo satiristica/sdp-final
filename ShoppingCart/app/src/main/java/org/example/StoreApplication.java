@@ -72,6 +72,10 @@ public final class StoreApplication {
         return cart.discount().description();
     }
 
+    public void startCheckout() {
+        checkout.requireItems();
+    }
+
     public String completeCheckout() {
         return checkout.checkout();
     }

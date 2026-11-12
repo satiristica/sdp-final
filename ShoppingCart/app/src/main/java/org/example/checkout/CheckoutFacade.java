@@ -12,10 +12,14 @@ public final class CheckoutFacade {
         this.payments = payments;
     }
 
-    public String checkout() {
+    public void requireItems() {
         if (cart.isEmpty()) {
             throw new StoreException("Client Error: Add a product before checkout.");
         }
+    }
+
+    public String checkout() {
+        requireItems();
         String paymentReference = payments.pay(cart.totals().total());
         cart.clear();
         return paymentReference;

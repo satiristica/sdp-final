@@ -95,9 +95,7 @@ public final class ConsoleStore {
     }
 
     private void checkout() {
-        if (store.cartIsEmpty()) {
-            throw new StoreException("Client Error: Add a product before checkout.");
-        }
+        store.startCheckout();
         showCart();
         if (confirm("Confirm purchase?")) {
             System.out.println("Simulated payment approved: " + store.completeCheckout());
