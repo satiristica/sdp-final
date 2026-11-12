@@ -19,7 +19,6 @@ public final class ShoppingCart implements ProductObserver {
 
     public ShoppingCart(CatalogService catalog) {
         this.catalog = catalog;
-        catalog.addObserver(this);
     }
 
     public List<CartLine> lines() {

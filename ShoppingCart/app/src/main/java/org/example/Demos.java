@@ -16,6 +16,7 @@ public final class Demos {
     public static void main(String[] args) {
         CatalogService catalog = new CatalogService(new SupplierCatalogAdapter(new ExternalSupplier()));
         ShoppingCart cart = new ShoppingCart(catalog);
+        catalog.addObserver(cart);
         PaymentService payments = new PaymentService();
 
         ConfiguredProduct coat = new ConfiguredProduct.Builder(catalog.find("COAT"))

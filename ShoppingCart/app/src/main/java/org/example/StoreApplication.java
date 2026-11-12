@@ -20,6 +20,7 @@ public final class StoreApplication {
     public StoreApplication() {
         catalog = new CatalogService(new SupplierCatalogAdapter(new ExternalSupplier()));
         cart = new ShoppingCart(catalog);
+        catalog.addObserver(cart);
         checkout = new CheckoutFacade(cart, new PaymentService());
     }
 
