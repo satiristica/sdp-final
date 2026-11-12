@@ -61,9 +61,9 @@ public final class ConsoleStore {
         var products = store.products();
         var product = products.get(choice("Product number", products.size()));
         System.out.println("Brand: 1. Gucci (+5000)  2. Louis Vuitton (+10000)  3. Yves Saint Laurent (+7500)");
-        String brand = ConfiguredProduct.BRANDS.get(choice("Brand number", ConfiguredProduct.BRANDS.size()));
+        String brand = ConfiguredProduct.BRANDS.get(choice("Brand number", ConfiguredProduct.BRANDS.size())).name();
         System.out.println("Material: 1. Cotton (+0)  2. Wool (+3000)  3. Polyester (+1000)  4. Leather (+7000)");
-        String material = ConfiguredProduct.MATERIALS.get(choice("Material number", ConfiguredProduct.MATERIALS.size()));
+        String material = ConfiguredProduct.MATERIALS.get(choice("Material number", ConfiguredProduct.MATERIALS.size())).name();
         CartItem item = new ConfiguredProduct.Builder(product).brand(brand).material(material).build();
         if (confirm("Add gift wrapping for " + Money.format(GiftWrap.PRICE) + " per item?")) {
             item = new GiftWrap(item);
