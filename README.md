@@ -73,7 +73,7 @@ Tests use an in-memory database, so they never touch this file.
 
 ## UML diagram
 
-![UML Diagram](uml.png)
+![UML Diagram](umlka.png)
 
 ## Tech stack
 
