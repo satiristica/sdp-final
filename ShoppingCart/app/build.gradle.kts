@@ -34,7 +34,7 @@ tasks.withType<JavaCompile>().configureEach {
     options.release = 21
 }
 
-application { mainClass = "org.example.GuiLauncher" }
+application { mainClass = "org.example.App" }
 tasks.named<JavaExec>("run") { standardInput = System.`in` }
 
 tasks.register<JavaExec>("demo") {
