@@ -1,0 +1,231 @@
+.root {
+    -alabaster: #F2EEE7;
+    -ivory: #FBF9F5;
+    -sand: #E6DED2;
+    -linen: #EFE9E0;
+    -line: #D6CCBE;
+    -selection: #CFC3B3;
+    -taupe: #8B7D6F;
+    -taupe-dark: #5F554B;
+    -charcoal: #2E2D2B;
+    -clay: #9A5B4C;
+
+    -fx-base: -linen;
+    -fx-accent: -taupe;
+    -fx-focus-color: -taupe;
+    -fx-faint-focus-color: transparent;
+    -fx-control-inner-background: -ivory;
+    -fx-selection-bar: -selection;
+    -fx-selection-bar-non-focused: -sand;
+    -fx-background-color: -alabaster;
+    -fx-font-size: 13px;
+}
+
+.title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -charcoal;
+}
+
+.subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: -taupe;
+}
+
+.section-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -charcoal;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -taupe-dark;
+}
+
+.card {
+    -fx-background-color: -ivory;
+    -fx-background-radius: 12;
+    -fx-border-color: -line;
+    -fx-border-radius: 12;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(46, 45, 43, 0.10), 14, 0, 0, 4);
+}
+
+.panel {
+    -fx-background-color: -sand;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+}
+
+.badge {
+    -fx-background-color: -taupe;
+    -fx-background-radius: 10;
+    -fx-text-fill: -alabaster;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 9;
+}
+
+.price-preview {
+    -fx-text-fill: -taupe-dark;
+    -fx-font-weight: bold;
+    -fx-padding: 0 4;
+}
+
+.button {
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.button.primary,
+.button.dark,
+.button.secondary {
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+}
+
+.button.primary {
+    -fx-background-color: -taupe;
+    -fx-text-fill: -alabaster;
+    -fx-font-size: 14px;
+    -fx-padding: 11 16;
+}
+
+.button.primary:hover {
+    -fx-background-color: derive(-taupe, -15%);
+}
+
+.button.dark {
+    -fx-background-color: -charcoal;
+    -fx-text-fill: -alabaster;
+    -fx-font-size: 14px;
+    -fx-padding: 11 16;
+}
+
+.button.dark:hover {
+    -fx-background-color: derive(-charcoal, 20%);
+}
+
+.button.secondary {
+    -fx-background-color: -line;
+    -fx-text-fill: -charcoal;
+    -fx-padding: 7 13;
+}
+
+.button.secondary:hover {
+    -fx-background-color: derive(-line, -10%);
+}
+
+.button:pressed {
+    -fx-translate-y: 1;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.table-view {
+    -fx-background-color: -line, -ivory;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8;
+    -fx-padding: 1;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -sand;
+    -fx-background-radius: 8 8 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-size: 34;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -taupe-dark;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 0 10;
+}
+
+.table-row-cell {
+    -fx-cell-size: 32;
+    -fx-background-color: -ivory;
+    -fx-border-color: transparent transparent -linen transparent;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: -linen;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: -selection;
+}
+
+.table-row-cell:empty {
+    -fx-border-color: transparent;
+}
+
+.table-cell {
+    -fx-padding: 0 10;
+    -fx-alignment: center-left;
+    -fx-text-fill: -charcoal;
+    -fx-border-color: transparent;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -taupe;
+}
+
+.totals {
+    -fx-background-color: -alabaster;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14;
+}
+
+.totals-label,
+.totals-value {
+    -fx-text-fill: -taupe-dark;
+}
+
+.discount-line {
+    -fx-text-fill: -clay;
+}
+
+.total-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -charcoal;
+}
+
+.check-box {
+    -fx-text-fill: -taupe-dark;
+    -fx-font-weight: bold;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: transparent;
+    -fx-padding: 0 7;
+}
+
+.log {
+    -fx-control-inner-background: -charcoal;
+    -fx-background-color: -charcoal;
+    -fx-background-radius: 8;
+    -fx-text-fill: -sand;
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 12px;
+}
+
+.log .content {
+    -fx-background-radius: 8;
+}
