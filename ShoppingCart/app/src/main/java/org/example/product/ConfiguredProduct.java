@@ -7,16 +7,23 @@ import org.example.common.Money;
 import org.example.common.StoreException;
 
 public final class ConfiguredProduct implements CartItem {
-    public static final List<String> BRANDS = List.of("Gucci", "Louis Vuitton", "Yves Saint Laurent");
-    public static final List<String> MATERIALS = List.of("Cotton", "Wool", "Polyester", "Leather");
+    public static final List<Option> BRANDS = List.of(
+            new Option("Gucci", 5000),
+            new Option("Louis Vuitton", 10000),
+            new Option("Yves Saint Laurent", 7500));
+    public static final List<Option> MATERIALS = List.of(
+            new Option("Cotton", 0),
+            new Option("Wool", 3000),
+            new Option("Polyester", 1000),
+            new Option("Leather", 7000));
     private final CatalogProduct product;
-    private final String brand;
-    private final String material;
+    private final Option brand;
+    private final Option material;
 
-    private ConfiguredProduct(Builder builder) {
-        product = builder.product;
-        brand = builder.brand;
-        material = builder.material;
+    private ConfiguredProduct(CatalogProduct product, Option brand, Option material) {
+        this.product = product;
+        this.brand = brand;
+        this.material = material;
     }
 
     @Override
@@ -25,38 +32,29 @@ public final class ConfiguredProduct implements CartItem {
     }
 
     public String brand() {
-        return brand;
+        return brand.name();
     }
 
     public String material() {
-        return material;
+        return material.name();
     }
 
     @Override
     public String description() {
-        return product.name() + " (" + brand + ", " + material + ")";
+        return product.name() + " (" + brand.name() + ", " + material.name() + ")";
     }
 
     @Override
     public BigDecimal productPrice(BigDecimal basePrice) {
-        int brandExtra = switch (brand) {
-            case "Gucci" -> 5000;
-            case "Louis Vuitton" -> 10000;
-            default -> 7500;
-        };
-        int materialExtra = switch (material) {
-            case "Wool" -> 3000;
-            case "Polyester" -> 1000;
-            case "Leather" -> 7000;
-            default -> 0;
-        };
-        return basePrice.add(BigDecimal.valueOf(brandExtra + materialExtra));
+        return basePrice.add(BigDecimal.valueOf(brand.surcharge() + material.surcharge()));
     }
 
     @Override
     public BigDecimal extrasPrice() {
         return Money.ZERO;
     }
+
+    public record Option(String name, int surcharge) {}
 
     public static final class Builder {
         private final CatalogProduct product;
@@ -78,16 +76,14 @@ public final class ConfiguredProduct implements CartItem {
         }
 
         public ConfiguredProduct build() {
-            if (!BRANDS.contains(brand)) {
-                throw new StoreException("Client Error: Choose a supported brand.");
-            }
-
-            if (!MATERIALS.contains(material)) {
-                throw new StoreException("Client Error: Choose a supported material.");
-            }
-            return new ConfiguredProduct(this);
-
+            return new ConfiguredProduct(product, find(BRANDS, brand, "brand"), find(MATERIALS, material, "material"));
         }
 
+        private static Option find(List<Option> options, String name, String kind) {
+            return options.stream()
+                    .filter(option -> option.name().equals(name))
+                    .findFirst()
+                    .orElseThrow(() -> new StoreException("Client Error: Choose a supported " + kind + "."));
+        }
     }
 }

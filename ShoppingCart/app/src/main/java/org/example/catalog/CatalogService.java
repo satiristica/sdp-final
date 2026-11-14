@@ -28,6 +28,10 @@ public final class CatalogService {
         observers.add(observer);
     }
 
+    public void removeObserver(ProductObserver observer) {
+        observers.remove(observer);
+    }
+
     public void refresh() {
         for (CatalogProduct product : source.loadProducts()) {
             CatalogProduct old = products.put(product.id(), product);

@@ -26,6 +26,7 @@ class CartObserverTest {
     void cartsSharingACatalogReceiveNewPrices() {
         var store = TestShop.create();
         var otherCart = new ShoppingCart(store.catalog());
+        store.catalog().addObserver(otherCart);
         store.cart().add(TestShop.coat(store), 1);
         otherCart.add(TestShop.coat(store), 1);
         store.catalog().refresh();
