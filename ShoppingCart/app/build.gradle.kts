@@ -65,4 +65,7 @@ jacoco { toolVersion = "0.8.14" }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    classDirectories.setFrom(sourceSets.main.get().output.classesDirs.map {
+        fileTree(it) { exclude("org/example/ui/StoreWindow*", "org/example/GuiLauncher*") }
+    })
 }
