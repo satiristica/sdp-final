@@ -6,7 +6,7 @@ final class TestShop {
     private TestShop() {}
     
     static StoreApplication create() { 
-        return new StoreApplication(); 
+        return new StoreApplication("jdbc:sqlite::memory:"); 
     }
 
     static ConfiguredProduct coat(StoreApplication store) {

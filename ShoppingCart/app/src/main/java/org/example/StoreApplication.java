@@ -7,6 +7,7 @@ import org.example.cart.ShoppingCart;
 import org.example.catalog.CatalogProduct;
 import org.example.catalog.CatalogService;
 import org.example.checkout.CheckoutFacade;
+import org.example.checkout.OrderRepository;
 import org.example.checkout.PaymentService;
 import org.example.discount.DiscountStrategy;
 import org.example.product.CartItem;
@@ -18,10 +19,14 @@ public final class StoreApplication {
     private final CheckoutFacade checkout;
 
     public StoreApplication() {
+        this("jdbc:sqlite:store.db");
+    }
+
+    StoreApplication(String databaseUrl) {
         catalog = new CatalogService(new SupplierCatalogAdapter(new ExternalSupplier()));
         cart = new ShoppingCart(catalog);
         catalog.addObserver(cart);
-        checkout = new CheckoutFacade(cart, new PaymentService());
+        checkout = new CheckoutFacade(cart, new PaymentService(), new OrderRepository(databaseUrl));
     }
 
     CatalogService catalog() {

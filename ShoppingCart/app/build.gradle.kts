@@ -18,6 +18,7 @@ val javafxPlatform = System.getProperty("os.name").lowercase().let { os ->
 
 dependencies {
     implementation("org.aspectj:aspectjrt:1.9.25.1")
+    implementation("org.xerial:sqlite-jdbc:3.50.3.0")
     for (module in listOf("base", "graphics", "controls")) {
         implementation("org.openjfx:javafx-$module:$javafxVersion:$javafxPlatform")
     }
@@ -51,7 +52,10 @@ tasks.register<JavaExec>("gui") {
     mainClass = "org.example.GuiLauncher"
 }
 
+tasks.withType<JavaExec>().configureEach { jvmArgs("--enable-native-access=ALL-UNNAMED") }
+
 tasks.named<Test>("test") {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
     useJUnitPlatform()
     testLogging { events("failed", "skipped") }
     finalizedBy(tasks.jacocoTestReport)
